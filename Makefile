@@ -13,7 +13,6 @@
 
 NAME = libftprintf.a
 CFLAGS = -Wall -Wextra -Werror
-CFLAGS = -g
 FUNC = ft_prf_utils \
 		ft_prf_strutils \
 		ft_prf_strutils2 \
