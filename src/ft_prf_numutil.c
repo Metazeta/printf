@@ -6,7 +6,7 @@
 /*   By: eruaud <eruaud@student.42.fr>              +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/01/16 19:32:02 by eruaud       #+#   ##    ##    #+#       */
-/*   Updated: 2018/01/21 12:10:36 by eruaud      ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/01/29 16:07:21 by eruaud      ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -45,7 +45,7 @@ unsigned int	res_len(uintmax_t value, int base)
 	return (len);
 }
 
-static char		to_char(uintmax_t val, int maj)
+char			to_char(uintmax_t val, int maj)
 {
 	char	c;
 	char	a;

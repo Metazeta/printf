@@ -6,7 +6,7 @@
 /*   By: eruaud <eruaud@student.42.fr>              +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/01/17 18:24:55 by eruaud       #+#   ##    ##    #+#       */
-/*   Updated: 2018/01/21 16:26:12 by eruaud      ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/01/31 18:43:34 by eruaud      ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -36,91 +36,87 @@ unsigned int	d_res_len(intmax_t value)
 	return (len);
 }
 
-char			*ft_prf_itoa(intmax_t value, int zeros)
+char			*ft_prf_itoa(intmax_t value, int prec)
 {
 	char			*str;
 	int				len;
 	int				i;
-	intmax_t		nb;
+	uintmax_t		nb;
+	int				zeros;
 
-	len = d_res_len(value) + zeros;
+	len = d_res_len(value);
+	zeros = prec - len + (value <= 0);
 	nb = value < 0 ? -value : value;
-	str = ft_prf_strnew(len + 1);
+	str = ft_prf_strnew(len + zeros);
 	str[0] = value < 0 ? '-' : '0';
 	i = value < 0;
-	while (i <= zeros + (value < 0))
+	while (i < (zeros + (value < 0)))
+		str[i++] = '0';
+	i = (value < 0) + prec - 1;
+	while (nb != 0)
 	{
-		str[i] = '0';
-		i++;
-	}
-	i = 0;
-	while (i < len - (value < 0) - zeros)
-	{
-		str[len - i - 1] = '0' + nb % 10;
+		str[i] = '0' + nb % 10;
 		nb /= 10;
-		i++;
+		i--;
 	}
-	str[len] = 0;
+	str[len + zeros] = 0;
 	return (str);
 }
 
-int				hdlprec(intmax_t nb, char *opt)
+int				prf_d_type(intmax_t nb, const t_format *opt)
 {
-	int		zeros;
-	int		i;
+	int		prec;
+	int		printed;
+	int		spaces;
+	int		stop;
 
-	i = 0;
-	if (opt[1] == '0')
-		return (ft_prf_atoi(opt + 1) - d_res_len(nb));
-	while (opt[i] && opt[i] != '.')
-		i++;
-	if (!opt[i])
-		return (0);
-	zeros = ft_prf_atoi(opt + i + 1) - d_res_len(nb);
-	return (zeros < 0 ? 0 : zeros + (nb < 0));
-}
-
-int				prf_d_type(intmax_t nb, char *opt)
-{
-	unsigned int	sp;
-	unsigned int	len;
-	unsigned int	printed;
-
-	if ((sp = hdlspaces(opt)) > 0 && opt[1] != '0')
-		putnchar(sp - d_res_len(nb), ' ');
-	printed = 0;
-	if (contains(opt, ' ') && !sp)
+	stop = (opt->prec == -1 && !nb);
+	prec = max(d_res_len(nb) - (nb < 0), opt->prec) * !stop;
+	if (contains(opt->flags, '0') && !contains(opt->flags, '-') && !(opt->prec))
+		prec = max(opt->width - (nb < 0), d_res_len(nb) - (nb < 0)) -
+				contains(opt->flags, ' ');
+	spaces = (opt->width) - prec - (nb < 0);
+	printed = prec + spaces * (spaces > 0) + (nb < 0);
+	spaces -= (contains(opt->flags, '+') && nb >= 0);
+	if (contains(opt->flags, ' ') && spaces <= 0 && nb >= 0
+		&& !contains(opt->flags, '+'))
 		printed += putnchar(1, ' ');
-	if (contains(opt, '+') && nb >= 0)
-		printed = putnchar(1, '+');
-	printed += hdlprec(nb, opt);
-	len = d_res_len(nb);
-	write(1, ft_prf_itoa(nb, hdlprec(nb, opt)), len + hdlprec(nb, opt));
-	printed += len;
-	if (hdlspaces(opt) < 0)
-	{
-		sp = -sp;
-		putnchar(sp - d_res_len(nb), opt[1] != '0' ? ' ' : '0');
-	}
-	return ((sp <= printed) ? printed : sp);
+	putnchar(spaces * !contains(opt->flags, '-'), ' ');
+	putnchar((contains(opt->flags, '+') && nb >= 0), '+');
+	if (prec == opt->width && contains(opt->flags, '+') && nb >= 0)
+		prec-- && printed--;
+	printed += ((contains(opt->flags, '+') && nb >= 0 && spaces <= 0));
+	if (!stop)
+		write(1, ft_prf_itoa(nb, prec), prec + (nb < 0));
+	putnchar(spaces * contains(opt->flags, '-'), ' ');
+	return (printed);
 }
 
-int				prf_d(va_list args, char *opt)
+int				prf_d(va_list args, const t_format *opt)
 {
-	char	type;
-	char	tag;
-
-	tag = istag(opt[format_len(opt) - 1]);
-	type = get_type(opt);
-	if (type == 'j')
+	if (opt->type == 'j' && (opt->tag == 'd' || opt->tag == 'i'))
 		return (prf_d_type(va_arg(args, intmax_t), opt));
-	else if (type == 'k')
-		return (prf_d_type((intmax_t)(long long)va_arg(args, long long), opt));
-	else if (tag == 'D' || type == 'l')
-		return (prf_d_type((intmax_t)(long)va_arg(args, long), opt));
-	else if (tag == 'u')
-		return (prf_d_type((intmax_t)(unsigned int)va_arg(args, unsigned int)
-		, opt));
-	else
-		return (prf_d_type((intmax_t)(int)va_arg(args, int), opt));
+	if (opt->type == 'h' && opt->tag == 'u')
+		return (prf_d_type((unsigned short)va_arg(args, intmax_t), opt));
+	if (opt->type == 'i' && opt->tag == 'u')
+		return (prf_d_type((unsigned char)va_arg(args, intmax_t), opt));
+	if (opt->type == 'h' && (opt->tag == 'd' || opt->tag == 'i'))
+		return (prf_d_type((intmax_t)(short)va_arg(args, int), opt));
+	if (opt->type == 'i' && (opt->tag == 'd' || opt->tag == 'i'))
+		return (prf_d_type((intmax_t)(signed char)va_arg(args, int), opt));
+	else if ((opt->type == 'j') && opt->tag == 'u')
+		return (prf_u_type(va_arg(args, uintmax_t), opt));
+	else if (opt->type == 'k' && (opt->tag == 'd' || opt->tag == 'i'))
+		return (prf_d_type((intmax_t)va_arg(args, long long), opt));
+	else if (opt->tag == 'D' || (opt->type == 'l' &&
+			(opt->tag == 'd' || opt->tag == 'i')))
+		return (prf_d_type((intmax_t)va_arg(args, long), opt));
+	else if ((opt->type == 'z' && (opt->tag == 'd' || opt->tag == 'i')))
+		return (prf_d_type((intmax_t)va_arg(args, size_t), opt));
+	else if ((opt->type == 0 && opt->tag == 'u'))
+		return (prf_u_type((uintmax_t)va_arg(args, unsigned int), opt));
+	else if (opt->tag == 'U' || (((opt->type == 'l' || opt->type == 'k') ||
+			opt->type == 'z') && opt->tag == 'u'))
+		return (prf_u_type((uintmax_t)va_arg(args, unsigned long long), opt));
+	return (prf_d_type((intmax_t)va_arg(args, int), opt));
 }

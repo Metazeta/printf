@@ -1,24 +1,26 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   ft_prf_pc.c                                      .::    .:/ .      .::   */
+/*   ft_prf_strutils2.c                               .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: eruaud <eruaud@student.42.fr>              +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2018/01/16 18:57:24 by eruaud       #+#   ##    ##    #+#       */
-/*   Updated: 2018/01/25 14:21:38 by eruaud      ###    #+. /#+    ###.fr     */
+/*   Created: 2017/11/23 09:42:49 by eruaud       #+#   ##    ##    #+#       */
+/*   Updated: 2018/02/01 11:06:28 by eruaud      ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-int			prf_pc(char *str, const t_format *opt)
+void	ft_putstri(unsigned int *c)
 {
-	int		i;
+	size_t  i;
 
-	(void)str;
-	(void)opt;
-	i = 1;
-	return (0);
+	i = 0;
+	while (c[i])
+	{
+		write(1, c + i, 1);
+		i++;
+	}
 }

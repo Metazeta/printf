@@ -6,7 +6,7 @@
 /*   By: eruaud <eruaud@student.42.fr>              +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2017/11/23 09:42:49 by eruaud       #+#   ##    ##    #+#       */
-/*   Updated: 2018/01/21 13:36:13 by eruaud      ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/01/26 17:48:49 by eruaud      ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -44,15 +44,22 @@ void			*ft_prf_memalloc(size_t len)
 	return (mem);
 }
 
-int				putnchar(int nb, char c)
+int				max(int a, int b)
 {
+	return (a > b ? a : b);
+}
+
+int				putnchar(const int nb, const char c)
+{
+	char	str[nb + 1];
 	int		i;
 
-	i = nb;
-	while (i > 0)
-	{
-		write(1, &c, 1);
-		i--;
-	}
+	if (nb <= 0)
+		return (0);
+	i = 0;
+	while (i < nb)
+		str[i++] = c;
+	str[nb] = 0;
+	write(1, str, nb);
 	return (nb);
 }

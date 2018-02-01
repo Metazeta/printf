@@ -6,7 +6,7 @@
 /*   By: eruaud <eruaud@student.42.fr>              +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2017/11/23 09:42:49 by eruaud       #+#   ##    ##    #+#       */
-/*   Updated: 2018/01/21 13:36:26 by eruaud      ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/01/31 18:35:05 by eruaud      ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -41,11 +41,41 @@ size_t		ft_prf_strlen(const char *str)
 	return (len);
 }
 
+char		*ft_prf_strncpy(char *dest, char *src, size_t n)
+{
+	unsigned int	i;
+
+	i = 0;
+	while (i < n && src[i])
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	while (i < n)
+	{
+		dest[i] = '\0';
+		i++;
+	}
+	return (dest);
+}
+
+char		*ft_prf_strsub(char const *s, unsigned int start, size_t len)
+{
+	char	*so;
+
+	if (!(so = ft_prf_strnew(len)) || !s)
+		return (NULL);
+	so = ft_prf_strncpy(so, (char *)s + start, len);
+	return (so);
+}
+
 int			contains(char *str, char c)
 {
 	int		i;
 
 	i = 0;
+	if (!str)
+		return (0);
 	while (str[i] && str[i] != c)
 		i++;
 	if (str[i] == c)

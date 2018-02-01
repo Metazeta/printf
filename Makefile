@@ -6,17 +6,18 @@
 #   By: eruaud <eruaud@student.42.fr>              +:+   +:    +:    +:+       #
 #                                                 #+#   #+    #+    #+#        #
 #   Created: 2017/12/28 15:26:42 by eruaud       #+#   ##    ##    #+#         #
-#   Updated: 2018/01/21 12:14:09 by eruaud      ###    #+. /#+    ###.fr       #
+#   Updated: 2018/02/01 10:58:14 by eruaud      ###    #+. /#+    ###.fr       #
 #                                                         /                    #
 #                                                        /                     #
 # **************************************************************************** #
 
 NAME = libftprintf.a
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
+#CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -g
 FUNC = ft_prf_utils \
-		ft_prf_utils2 \
 		ft_prf_strutils \
+		ft_prf_strutils2 \
 		ft_prf_putwchar \
 		ft_prf_launcher \
 		ft_prf_s \
@@ -24,8 +25,12 @@ FUNC = ft_prf_utils \
 		ft_prf_x \
 		ft_prf_pc \
 		ft_prf_d \
+		ft_prf_d2 \
+		ft_prf_c \
 		ft_prf_atoi \
 		ft_prf_numutil \
+		prf_tags \
+		ft_prf_o \
 		ft_printf
 SRC = $(addprefix src/, $(addsuffix .c, $(FUNC)))
 OBJ = $(addprefix build/, $(addsuffix .o, $(FUNC)))
@@ -69,10 +74,10 @@ copy:
 	@cp -rf includes ../../vogsphere/printf
 	@cp  Makefile ../../vogsphere/printf
 	@cp  auteur ../../vogsphere/printf
-	@cp libftprintf.a curqui/
 	@echo "  $(YELLOW)$(NAME) have been copied to vogsphere."
 
-curqui: copy
+curqui: $(NAME)
+	@cp libftprintf.a curqui/
 	@make -C curqui/
 	@./curqui/ft_printf_tests
 

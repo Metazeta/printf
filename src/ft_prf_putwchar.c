@@ -6,14 +6,14 @@
 /*   By: eruaud <eruaud@student.42.fr>              +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2017/11/23 09:39:50 by eruaud       #+#   ##    ##    #+#       */
-/*   Updated: 2018/01/16 17:09:15 by eruaud      ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/02/01 14:11:12 by eruaud      ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static size_t	bitlen(unsigned int value)
+size_t			bitlen(unsigned int value)
 {
 	size_t		len;
 
@@ -26,11 +26,11 @@ static size_t	bitlen(unsigned int value)
 	return (len);
 }
 
-void			fill_mask2(unsigned int input, int nbytes)
+void			fill_mask2(unsigned int input, int nbits)
 {
 	unsigned int	res[4];
 
-	if (nbytes <= 16)
+	if (nbits <= 16)
 	{
 		res[0] = 0b11100000 | (input >> 12);
 		res[1] = 0b10000000 | ((input >> 6) & 0b111111);
@@ -47,17 +47,17 @@ void			fill_mask2(unsigned int input, int nbytes)
 	ft_putstri(res);
 }
 
-void			fill_mask(unsigned int input, int nbytes)
+void			fill_mask(unsigned int input, int nbits)
 {
 	unsigned int	res[4];
 
-	if (nbytes <= 7)
+	if (nbits <= 7)
 	{
 		res[0] = input;
 		res[1] = 0;
 		ft_putstri(res);
 	}
-	else if (nbytes <= 11)
+	else if (nbits <= 11)
 	{
 		res[0] = 0b11000000 | (input >> 6);
 		res[1] = 0b10000000 | (input & 0b111111);
@@ -65,15 +65,18 @@ void			fill_mask(unsigned int input, int nbytes)
 		ft_putstri(res);
 	}
 	else
-		fill_mask2(input, nbytes);
+		fill_mask2(input, nbits);
 }
 
-void			ft_putwchar(wchar_t c)
+int				ft_putwchar(wchar_t c)
 {
 	size_t		len;
-
+	if ((MB_CUR_MAX == 1 && c != (char)c) || (c >= 0xD800 && c <= 0xDFFF)
+		|| c > 0x10FFFF || c < 0)
+		return (-1);
 	len = bitlen(c);
 	fill_mask(c, len);
+	return (get_nbytes(c));
 }
 
 void			ft_putwstr(wchar_t *str)
