@@ -12,8 +12,7 @@
 # **************************************************************************** #
 
 NAME = libftprintf.a
-CC = gcc
-#CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror
 CFLAGS = -g
 FUNC = ft_prf_utils \
 		ft_prf_strutils \
@@ -67,18 +66,5 @@ fclean:
 	@echo "  $(YELLOW)$(NAME) and OBJ files have been deleted."
 
 re: fclean $(NAME)
-
-copy:
-	@cp -rf build ../../vogsphere/printf
-	@cp -rf src ../../vogsphere/printf
-	@cp -rf includes ../../vogsphere/printf
-	@cp  Makefile ../../vogsphere/printf
-	@cp  auteur ../../vogsphere/printf
-	@echo "  $(YELLOW)$(NAME) have been copied to vogsphere."
-
-curqui: $(NAME)
-	@cp libftprintf.a curqui/
-	@make -C curqui/
-	@./curqui/ft_printf_tests
 
 .PHONY = all clean fclean re norm lib
