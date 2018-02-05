@@ -6,7 +6,7 @@
 /*   By: eruaud <eruaud@student.42.fr>              +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2017/11/23 09:39:50 by eruaud       #+#   ##    ##    #+#       */
-/*   Updated: 2018/02/01 14:11:12 by eruaud      ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/02/05 18:14:06 by eruaud      ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -28,7 +28,7 @@ size_t			bitlen(unsigned int value)
 
 void			fill_mask2(unsigned int input, int nbits)
 {
-	unsigned int	res[4];
+	unsigned int	res[5];
 
 	if (nbits <= 16)
 	{
@@ -43,6 +43,7 @@ void			fill_mask2(unsigned int input, int nbits)
 		res[1] = 0b10000000 | ((input >> 12) & 0b111111);
 		res[2] = 0b10000000 | ((input >> 6) & 0b111111);
 		res[3] = 0b10000000 | ((input & 0b111111));
+		res[4] = 0;
 	}
 	ft_putstri(res);
 }
@@ -71,6 +72,9 @@ void			fill_mask(unsigned int input, int nbits)
 int				ft_putwchar(wchar_t c)
 {
 	size_t		len;
+
+	if ((MB_CUR_MAX == 1 && c <= 255 && c >= 127) || c == 0)
+		return (write(1, &c, 1));
 	if ((MB_CUR_MAX == 1 && c != (char)c) || (c >= 0xD800 && c <= 0xDFFF)
 		|| c > 0x10FFFF || c < 0)
 		return (-1);
@@ -79,14 +83,18 @@ int				ft_putwchar(wchar_t c)
 	return (get_nbytes(c));
 }
 
-void			ft_putwstr(wchar_t *str)
+int				ft_putwstr(wchar_t *str, int len)
 {
+	int		ret;
 	int		i;
 
+	ret = 0;
 	i = 0;
-	while (str[i])
+	while (str[i] && ((ret + get_nbytes(str[i])) <= (unsigned long)len))
 	{
 		ft_putwchar(str[i]);
+		ret += get_nbytes(str[i]);
 		i++;
 	}
+	return (ret);
 }

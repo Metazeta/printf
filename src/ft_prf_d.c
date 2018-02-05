@@ -6,7 +6,7 @@
 /*   By: eruaud <eruaud@student.42.fr>              +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/01/17 18:24:55 by eruaud       #+#   ##    ##    #+#       */
-/*   Updated: 2018/01/31 18:43:34 by eruaud      ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/02/05 19:08:43 by eruaud      ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -63,6 +63,15 @@ char			*ft_prf_itoa(intmax_t value, int prec)
 	return (str);
 }
 
+void			writeandfree(intmax_t nb, int prec)
+{
+	char	*str;
+
+	str = ft_prf_itoa(nb, prec);
+	write(1, str, prec + (nb < 0));
+	free(str);
+}
+
 int				prf_d_type(intmax_t nb, const t_format *opt)
 {
 	int		prec;
@@ -87,7 +96,7 @@ int				prf_d_type(intmax_t nb, const t_format *opt)
 		prec-- && printed--;
 	printed += ((contains(opt->flags, '+') && nb >= 0 && spaces <= 0));
 	if (!stop)
-		write(1, ft_prf_itoa(nb, prec), prec + (nb < 0));
+		writeandfree(nb, prec);
 	putnchar(spaces * contains(opt->flags, '-'), ' ');
 	return (printed);
 }

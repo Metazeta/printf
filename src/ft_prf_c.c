@@ -6,7 +6,7 @@
 /*   By: eruaud <eruaud@student.42.fr>              +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/01/16 17:11:07 by eruaud       #+#   ##    ##    #+#       */
-/*   Updated: 2018/02/01 14:08:44 by eruaud      ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/02/01 15:10:44 by eruaud      ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -42,7 +42,7 @@ int			prf_c(va_list args, const t_format *opt)
 		ch = va_arg(args, int);
 	zero = contains(opt->flags, '0') ? '0' : ' ';
 	spaces = ((opt->width) - (int)get_nbytes((wchar_t)ch)) *
-	 		(((opt->width) - (int)get_nbytes(ch)) > 0);
+	(((opt->width) - (int)get_nbytes(ch)) > 0);
 	putnchar(spaces * !contains(opt->flags, '-'), zero);
 	if (opt->tag == 'C' || opt->type == 'l')
 		nb = ft_putwchar(ch);

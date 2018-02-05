@@ -6,7 +6,7 @@
 /*   By: eruaud <eruaud@student.42.fr>              +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/01/17 13:17:24 by eruaud       #+#   ##    ##    #+#       */
-/*   Updated: 2018/01/31 18:40:01 by eruaud      ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/02/05 18:38:32 by eruaud      ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -38,15 +38,13 @@ char			*ft_prf_itoa_x(uintmax_t nb, int maj, int prec)
 	return (str);
 }
 
-int				subprf_x_type(uintmax_t nb, const t_format *opt, int prec,
-				int spaces)
+int				subprf_x_type(uintmax_t nb, const t_format *opt, int spaces)
 {
 	int		printed;
 
+	printed = 0;
 	if (!contains(opt->flags, '-'))
 		putnchar(spaces, ' ');
-	putnchar((contains(opt->flags, '+')), '+');
-	printed = ((contains(opt->flags, '+') && spaces <= 0));
 	if (contains(opt->flags, '#') && nb != 0)
 		printed += (opt->tag == 'X') ? write(1, "0X", 2) : write(1, "0x", 2);
 	return (printed);
@@ -58,26 +56,25 @@ int				prf_x_type(uintmax_t nb, const t_format *opt)
 	int		printed;
 	int		spaces;
 	int		stop;
+	char	*tofree;
 
+	tofree = NULL;
 	stop = (opt->prec == -1 && !nb);
 	prec = max(res_len(nb, 16), opt->prec) * !stop;
-	if (contains(opt->flags, '0') && !(opt->prec))
-		prec = max(opt->width, res_len(nb, 16)) - contains(opt->flags, ' ');
+	if (contains(opt->flags, '0') && !contains(opt->flags, '-') && !(opt->prec))
+		prec = max(opt->width, res_len(nb, 16));
 	spaces = (opt->width) - prec;
 	if (contains(opt->flags, '#') && nb != 0)
 		spaces -= 2;
 	if (contains(opt->flags, '#') && nb != 0 && opt->width == prec)
 		prec -= 2;
 	printed = prec + spaces * (spaces > 0);
-	spaces -= (contains(opt->flags, '+'));
-	if (contains(opt->flags, ' ') && spaces <= 0
-		&& !contains(opt->flags, '+'))
-		printed += putnchar(1, ' ');
-	printed += subprf_x_type(nb, opt, prec, spaces);
+	printed += subprf_x_type(nb, opt, spaces);
 	if (!stop)
-		write(1, ft_prf_itoa_x(nb, opt->tag == 'X', prec), prec);
+		write(1, (tofree = ft_prf_itoa_x(nb, opt->tag == 'X', prec)), prec);
 	if (contains(opt->flags, '-'))
 		putnchar(spaces, ' ');
+	tofree ? free(tofree) : tofree;
 	return (printed);
 }
 

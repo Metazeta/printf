@@ -6,12 +6,13 @@
 #   By: eruaud <eruaud@student.42.fr>              +:+   +:    +:    +:+       #
 #                                                 #+#   #+    #+    #+#        #
 #   Created: 2017/12/28 15:26:42 by eruaud       #+#   ##    ##    #+#         #
-#   Updated: 2018/02/01 10:58:14 by eruaud      ###    #+. /#+    ###.fr       #
+#   Updated: 2018/02/05 18:13:37 by eruaud      ###    #+. /#+    ###.fr       #
 #                                                         /                    #
 #                                                        /                     #
 # **************************************************************************** #
 
 NAME = libftprintf.a
+CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 FUNC = ft_prf_utils \
 		ft_prf_strutils \
@@ -65,5 +66,18 @@ fclean:
 	@echo "  $(YELLOW)$(NAME) and OBJ files have been deleted."
 
 re: fclean $(NAME)
+
+copy:
+	@cp -rf build ../../vogsphere/printf
+	@cp -rf src ../../vogsphere/printf
+	@cp -rf includes ../../vogsphere/printf
+	@cp  Makefile ../../vogsphere/printf
+	@cp  auteur ../../vogsphere/printf
+	@echo "  $(YELLOW)$(NAME) have been copied to vogsphere."
+
+curqui: $(NAME)
+	@cp libftprintf.a curqui/
+	@make -C curqui/
+	@./curqui/ft_printf_tests
 
 .PHONY = all clean fclean re norm lib

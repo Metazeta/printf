@@ -6,19 +6,21 @@
 /*   By: eruaud <eruaud@student.42.fr>              +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/01/16 18:57:24 by eruaud       #+#   ##    ##    #+#       */
-/*   Updated: 2018/01/25 14:21:38 by eruaud      ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/02/05 18:15:46 by eruaud      ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-int			prf_pc(char *str, const t_format *opt)
+int			prf_pc(va_list args, const t_format *opt)
 {
-	int		i;
+	char	zero;
 
-	(void)str;
-	(void)opt;
-	i = 1;
-	return (0);
+	(void)args;
+	zero = contains(opt->flags, '0') ? '0' : ' ';
+	putnchar(!contains(opt->flags, '-') * (opt->width - 1), zero);
+	write(1, "%", 1);
+	putnchar(contains(opt->flags, '-') * (opt->width - 1), zero);
+	return (opt->width < 1 ? 1 : opt->width);
 }
