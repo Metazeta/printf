@@ -6,7 +6,7 @@
 /*   By: eruaud <eruaud@student.42.fr>              +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/01/16 17:11:07 by eruaud       #+#   ##    ##    #+#       */
-/*   Updated: 2018/02/05 18:14:58 by eruaud      ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/02/06 08:00:32 by eruaud      ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -22,10 +22,11 @@ int			prf_s(char *str, const t_format *opt)
 	len = str ? ft_prf_strlen(str) : 6;
 	len = opt->prec < len && opt->prec ? opt->prec : len * (opt->prec != -1);
 	zero = contains(opt->flags, '0') ? '0' : ' ';
+	len = len < 0 ? 0 : len;
 	spaces = (((opt->width) - len) * (((opt->width) - len) > 0));
-	putnchar(spaces * !contains(opt->flags, '-') - (opt->prec == -1), zero);
+	putnchar(spaces * !contains(opt->flags, '-'), zero);
 	if (!str && opt->prec != -1)
-		write(1, "(null)", 6);
+		write(1, "(null)", len);
 	else if (opt->prec != -1)
 		write(1, str, len);
 	putnchar(spaces * contains(opt->flags, '-'), zero);
@@ -81,7 +82,7 @@ int			prf_bigs(va_list args, const t_format *opt)
 	if (!wstr && opt->prec != -1)
 		write(1, "(null)", 6);
 	else if (opt->prec != -1)
-		ft_putwstr(wstr, len);
+		len = ft_putwstr(wstr, len);
 	putnchar(spaces * contains(opt->flags, '-'), zero);
-	return (wstr ? trunc_swlen(wstr, len) + spaces : 6 + spaces);
+	return (wstr ? len + spaces : 6 + spaces);
 }

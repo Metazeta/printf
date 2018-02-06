@@ -6,7 +6,7 @@
 /*   By: eruaud <eruaud@student.42.fr>              +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2017/11/23 09:39:50 by eruaud       #+#   ##    ##    #+#       */
-/*   Updated: 2018/02/05 18:14:06 by eruaud      ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/02/06 08:03:40 by eruaud      ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -73,9 +73,9 @@ int				ft_putwchar(wchar_t c)
 {
 	size_t		len;
 
-	if ((MB_CUR_MAX == 1 && c <= 255 && c >= 127) || c == 0)
+	if ((MB_CUR_MAX <= 1 && c <= 255 && c > 127) || c == 0)
 		return (write(1, &c, 1));
-	if ((MB_CUR_MAX == 1 && c != (char)c) || (c >= 0xD800 && c <= 0xDFFF)
+	if ((MB_CUR_MAX <= 1 && c > 255) || (c >= 0xD800 && c <= 0xDFFF)
 		|| c > 0x10FFFF || c < 0)
 		return (-1);
 	len = bitlen(c);
@@ -90,10 +90,17 @@ int				ft_putwstr(wchar_t *str, int len)
 
 	ret = 0;
 	i = 0;
+	while (i < len && str[i])
+	{
+		if ((str[i] >= 0xD800 && str[i] <= 0xDFFF) || str[i] > 0x10FFFF ||
+			str[i] < 0 || (MB_CUR_MAX <= 1 && str[i] > 255))
+			return (-1);
+		i++;
+	}
+	i = 0;
 	while (str[i] && ((ret + get_nbytes(str[i])) <= (unsigned long)len))
 	{
-		ft_putwchar(str[i]);
-		ret += get_nbytes(str[i]);
+		ret += ft_putwchar(str[i]);
 		i++;
 	}
 	return (ret);
